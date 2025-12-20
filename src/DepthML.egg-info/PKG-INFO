@@ -6,3 +6,39 @@ License-File: LICENSE
 Requires-Dist: numpy>=2.3.1
 Requires-Dist: depthtensor>=2.0.2
 Dynamic: license-file
+
+# DepthML: A Deep Learning Framework
+
+DepthML is a high-performance, Pythonic deep learning framework, which provides a hybrid structure (**Keras-like** lazy initialization combined with **PyTorch-like** imperative programming), while delegating all low-level tensor calculus to the [DepthTensor](http) backend.
+
+## Features
+
+- Hybrid Object-Oriented API: Incorporates design paradigms present in both Keras and PyTorch.
+
+- Hardware Agnostic: Easily switches between the CPU (numpy) and the GPU (cupy) via the DepthTensor backend.
+
+## Benchmarks
+
+DepthML is capable of training standard architectures.
+
+**Task**: MNIST Digit Classifcation (60k samples)
+
+**Architecture**: 3-Layer MLP (784 -> 32 -> 10)
+
+**Hardware**: NVIDIA GPU
+
+| Metric         | Result |
+| -------------- | ------ |
+| Final Accuracy | 93.86% |
+| Training Time (5 epochs) | ~45 seconds |
+| Average Step Time | 7.4 ms |
+| Convergence | < 2 epochs |
+
+This framework achieves within 3x the step-latency of optimized C++ frameworks for small-scale MLPs.
+
+## Installation
+
+```bash
+pip install depthml
+```
+

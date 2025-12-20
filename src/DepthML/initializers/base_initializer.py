@@ -1,33 +1,37 @@
-from abc import ABC, abstractmethod
-from typing import (
-    Any,
-    Optional
-)
-
-from DepthTensor.typing import (
-    ShapeLike,
-    DeviceLike
-)
+from abc import abstractmethod
+from ..typing import tensor_types
 
 from DepthTensor import Tensor
 
-class BaseInitializer(ABC):
-    def __init__(self) -> None:
-        super().__init__()
-        self._build = False
-        
+
+class BaseInitializer:
+    def __init__(self, name: str = "initializer") -> None:
+        self.name = name
+
     @abstractmethod
-    def call(self, *args: Any, **kwds: Any) -> Any:
+    def __call__(
+        self,
+        shape: tensor_types.Shape,
+        device: tensor_types.Device,
+        requires_grad: bool,
+    ) -> Tensor:
         raise NotImplementedError
 
-    def build(self, device: DeviceLike) -> Any:
-        self.device: DeviceLike = device
-    
-    def __call__(self, fan_inout: ShapeLike, device: Optional[DeviceLike] = None) -> Tensor:
-        if not self._build:
-            self._build = True
-            if device is not None:
-                self.build(device)
-            else:
-                raise RuntimeError("In order to be called, initializer must be built first. Insufficient arguments available to initiate the process: argument device is None.")
-        return self.call(fan_inout)
+    def compute_fans(self, shape: tensor_types.Shape) -> tuple[float, float]:
+        if len(shape) == 2:
+            # linear Layer: (in, out)
+            fan_in = shape[0]
+            fan_out = shape[1]
+        elif len(shape) == 4:
+            # conv Layer: (out_channels, in_channels, kH, kW)
+            # fan_in = in_channels * kH * kW
+            # fan_out = out_channels * kH * kW
+            size = shape[2] * shape[3]
+            fan_in = shape[1] * size
+            fan_out = shape[0] * size
+        else:
+            # fallback for 1D or other shapes
+            fan_in = shape[0]
+            fan_out = shape[0]
+
+        return fan_in, fan_out

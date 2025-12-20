@@ -1,4 +1,5 @@
 *.pyc
+*.npz
 
 build/
 venv/

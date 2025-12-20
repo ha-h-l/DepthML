@@ -1,23 +1,17 @@
-from abc import ABC, abstractmethod
-from typing import (Any)
+from __future__ import annotations
+from ..layers import BaseLayer
+from ..typing import OptimizerLike
 
-class BaseModel(ABC):
-    def __init__(self) -> None:
-        super().__init__()
-        self._build = False
 
-    @abstractmethod
-    def build(self, *args, **kwds: Any) -> Any:
-        raise NotImplementedError
+class BaseModel(BaseLayer):
+    def __init__(self, name: str = "model") -> None:
+        super().__init__(name=name)
+        self.optimizer: OptimizerLike | None = None
 
-    @abstractmethod
-    def call(self, *args: Any, **kwds: Any) -> Any:
-        raise NotImplementedError
+    ###
+    ### BaseModel methods
+    ###
 
-    @abstractmethod
-    def fit(self, *args: Any, **kwds: Any) -> Any:
-        raise NotImplementedError
-
-    @abstractmethod
-    def __call__(self, *args: Any, **kwds: Any) -> Any:
-        raise NotImplementedError
+    def use(self, optimizer: OptimizerLike) -> BaseModel:
+        self.optimizer = optimizer
+        return self
