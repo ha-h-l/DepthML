@@ -30,9 +30,8 @@ class Sequential(BaseModel):
     ###
 
     def __call__(self, X: Tensor, **kwargs: Any) -> Tensor:
-        return super().__call__(X, **kwargs)
-
-    def call(self, X: Tensor, **kwargs: Any) -> Tensor:
+        if not self.built:
+            self.build(X.shape[1:], X.device)
         for layer in self.layers:
             X = layer(X, **kwargs)
         return X

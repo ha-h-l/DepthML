@@ -18,10 +18,6 @@ class Block(ABC):
         self.built = False
 
     @abstractmethod
-    def call(self, *args: Any, **kwargs: Any) -> Any:
-        raise NotImplementedError
-
-    @abstractmethod
     def build(
         self,
         input_shape: tuple[int, ...],
@@ -57,8 +53,6 @@ class Block(ABC):
             self._blocks[name] = value
         super().__setattr__(name, value)
 
+    @abstractmethod
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
-        if not self.built:
-            X = args[0]
-            self.build(input_shape=X.shape, device=X.device)
-        return self.call(*args, **kwargs)
+        raise NotImplementedError

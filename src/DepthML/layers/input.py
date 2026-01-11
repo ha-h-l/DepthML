@@ -15,9 +15,6 @@ class Input(Block):
     ###
 
     def __call__(self, X: Tensor, **kwargs: Any) -> Tensor:
-        return super().__call__(X, **kwargs)
-
-    def call(self, X: Tensor, **kwargs: Any) -> Tensor:
         return X
 
     def build(

@@ -22,7 +22,7 @@ model = dml.Sequential(
     dml.Linear(units=32),
     dml.LeakyReLU(),
     dml.Linear(units=10),
-    device="gpu",
+    device="cpu",
 )
 
 optim = dml.SGD(parameters=model.parameters(), learning_rate=0.1)
@@ -34,6 +34,7 @@ EPOCHS = 5
 
 for epoch in range(EPOCHS):
     start_time = time.time()
+
     avg_epoch_loss = 0
     avg_epoch_acc = 0
 
@@ -46,18 +47,17 @@ for epoch in range(EPOCHS):
         X_batch = X_train[batch_idx]
         y_batch = y_train[batch_idx]
 
-        X_batch = dt.Tensor(X_batch, device="gpu")
-        y_batch = dt.Tensor(y_batch, device="gpu")
+        X_batch = dt.Tensor(X_batch, device="cpu")
+        y_batch = dt.Tensor(y_batch, device="cpu")
 
         optim.zero_grad()
-
         y_pred = model(X_batch)
-        loss = criterion(y_batch, y_pred)
 
+        loss = criterion(y_batch, y_pred)
         dt.differentiate(loss)
         optim.step()
-        avg_epoch_loss += loss.item()
 
+        avg_epoch_loss += loss.item()
         predictions = np.argmax(y_pred.data, axis=1)
         targets = np.argmax(y_batch.data, axis=1)
         avg_epoch_acc += np.mean(predictions == targets)
